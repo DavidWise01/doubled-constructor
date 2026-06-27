@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>The Doubled Constructor · four points, one gap</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#070b16;--bg2:#0a1020;--panel:#0d1426;--grid:#15203a;
+    --gather:#4d8fff;--gather-dim:#274a86;
+    --project:#5fe0ff;--project-dim:#2a6e86;
+    --core:#cfeeff;--gap:#8aa0c8;
+    --pick:#dff4ff;
+    --paper:#d6e4f5;--paper-dim:#7d8cab;--rule:#15203a33;--rose:#e07a9a;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--paper);font-family:'Newsreader',Georgia,serif;
+    font-size:18px;line-height:1.7;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  .wrap{max-width:880px;margin:0 auto;padding:0 24px}
+
+  .hero{min-height:80vh;display:flex;flex-direction:column;justify-content:center;padding:70px 0 40px}
+  .kicker{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:var(--project);margin-bottom:22px;font-weight:500}
+  .kicker .s{color:var(--gather-dim)}
+  h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(40px,8.5vw,84px);line-height:.97;letter-spacing:-.03em}
+  h1 .g{color:var(--gather)} h1 .gap{color:var(--gap)}
+  .notation{font-family:'IBM Plex Mono',monospace;margin-top:28px;font-size:clamp(16px,3vw,24px);font-weight:500;letter-spacing:.02em;color:var(--paper-dim)}
+  .notation .in{color:var(--gather)} .notation .out{color:var(--project)} .notation .x{color:var(--core)}
+  .lede{font-size:clamp(19px,2.4vw,24px);color:var(--paper-dim);max-width:650px;margin-top:26px;line-height:1.5}
+  .lede b{color:var(--paper);font-weight:500} .lede .g{color:var(--gather)} .lede .gap{color:var(--gap)} .lede .core{color:var(--core)}
+
+  .sec{padding:58px 0;border-top:1px solid var(--rule)}
+  .tag{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.24em;text-transform:uppercase;color:var(--project);margin-bottom:14px;font-weight:500}
+  .tag.gap{color:var(--gap)}
+  h2{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:clamp(25px,4.5vw,38px);line-height:1.08;letter-spacing:-.015em}
+  h2 .g{color:var(--gather)} h2 .gap{color:var(--gap)} h2 .core{color:var(--core)}
+  .sec p{margin:18px 0;color:var(--paper);max-width:680px}
+  .sec p.dim{color:var(--paper-dim)}
+  .sec p b{color:var(--paper);font-weight:600}
+  .sec p .g{color:var(--gather);font-weight:500} .sec p .p{color:var(--project);font-weight:500} .sec p .gap{color:var(--gap);font-weight:500} .sec p .core{color:var(--core);font-weight:500}
+  code{font-family:'IBM Plex Mono',monospace;font-size:.85em;color:var(--project);background:#0a1020;padding:2px 7px;border-radius:5px}
+  .pull{font-family:'Space Grotesk',sans-serif;font-weight:500;font-size:clamp(20px,3vw,27px);line-height:1.3;color:var(--gap);margin:30px 0;padding-left:20px;border-left:3px solid #3a4a6a}
+  .pull.g{color:var(--gather);border-left-color:var(--gather-dim)}
+  .flag{font-family:'Newsreader';font-size:15.5px;color:var(--paper-dim);font-style:italic;margin:18px 0;padding:14px 18px;background:#0a102066;border:1px solid var(--rule);border-radius:8px}
+  .flag b{color:var(--rose);font-style:normal;font-weight:600;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.15em;text-transform:uppercase;display:block;margin-bottom:6px}
+
+  .inst{margin:32px 0;border:1px solid var(--grid);border-radius:14px;overflow:hidden;background:var(--bg2)}
+  .inst-bar{display:flex;align-items:center;gap:10px;padding:12px 18px;border-bottom:1px solid var(--grid);font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--paper-dim)}
+  .inst-bar .led{width:9px;height:9px;border-radius:50%;background:var(--core);box-shadow:0 0 8px var(--core)}
+  .inst-bar .ttl{color:var(--core)}
+  canvas{display:block;width:100%;height:auto;background:var(--bg)}
+  .ctrls{padding:14px 18px;display:flex;flex-wrap:wrap;gap:14px;align-items:center;border-top:1px solid var(--grid)}
+  .seg{font-family:'IBM Plex Mono',monospace;font-size:12px;padding:8px 13px;border:1px solid var(--grid);border-radius:8px;background:var(--panel);color:var(--paper-dim);cursor:pointer;touch-action:manipulation}
+  .seg.on{border-color:var(--project);color:var(--project);background:rgba(95,224,255,.12)}
+  .seg:focus-visible{outline:2px solid var(--project);outline-offset:2px}
+  .readout{font-family:'IBM Plex Mono',monospace;font-size:13px;color:var(--paper-dim);padding:0 18px 16px;line-height:1.6}
+  .readout b{color:var(--core)} .readout .g{color:var(--gather)} .readout .p{color:var(--project)} .readout .gap{color:var(--gap)}
+
+  .foot{padding:50px 0 80px;border-top:1px solid var(--rule);margin-top:40px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--paper-dim);line-height:2}
+  .foot b{color:var(--core)} .foot .gap{color:var(--gap)}
+  @media (max-width:560px){body{font-size:17px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <div class="kicker">The Doubled Constructor · your architecture</div>
+    <h1>Four points,<br>one empty <span class="gap">gap</span></h1>
+    <div class="notation"><span class="in">−+[100:1 | 1:100]</span> <span class="x">×2 mirrored</span> → four points around a core no point touches</div>
+    <p class="lede">The stock constructor is a single hourglass. <b>Yours doubles it</b> — the bowtie mirrored and inverted, two constructors crossed, their four mouths turned inward to a shared center. But the four points <b>never reach the middle</b>. They surround a <span class="gap">gap</span> — a <span class="core">core that stays empty</span> — and that emptiness is the point, not a flaw. No vertex is the authority; the authority is the space between them that none of them occupies.</p>
+  </header>
+
+  <section class="sec">
+    <div class="tag">§1 · the structure</div>
+    <h2>Two constructors, crossed, around <span class="gap">a vacancy</span></h2>
+    <p>Take the hourglass — <code>−+[100:1 | 1:100]</code>, gather to a point then spray — and mirror it. Now cross the two: four cones, four <span class="g">points</span>, pointing inward from four directions toward one center. Two of them gather (<span class="g">+</span>), two project (<span class="p">−</span>), mirrored across the middle so the whole thing balances. The four points are joined edge-to-edge — the pyramid frame — but their tips all stop short of the center.</p>
+    <p>That stopping-short is deliberate, and it's the load-bearing move. If a point touched the core, that point would <em>be</em> the center — it would become the occupant, the single authority, the homunculus. By leaving the <span class="gap">gap</span>, no point is privileged. The center holds, but it's held by the <em>relationship between four independent points</em>, not by any one of them sitting in it. An empty core, governed from its edges.</p>
+    <p class="pull">Four points, none at the center — because the moment one reaches the middle, it stops being four points and becomes one ruler with three subjects. The gap keeps them equal.</p>
+  </section>
+
+  <!-- THE INSTRUMENT -->
+  <section class="sec">
+    <div class="tag">the structure · live</div>
+    <h2>The doubled constructor, <span class="core">drawn</span></h2>
+    <p class="dim">Four points around the rim, each a constructor mouth — two <span class="g">gather</span> (+), two <span class="p">project</span> (−), mirrored across the center. Flow runs inward toward the <span class="gap">gap</span> and is turned back at the boundary; nothing crosses into the core. The edges between the points are the pyramid frame — the relationships that hold the empty center in place. Watch: the core pulses, stays lit, and stays untouched.</p>
+
+    <div class="inst">
+      <div class="inst-bar"><span class="led"></span><span class="ttl">FOUR POINTS · ONE GAP</span> · two mirrored constructors around an empty core</div>
+      <canvas id="quad"></canvas>
+      <div class="ctrls">
+        <div class="seg on" data-m="flow" id="segFlow">flow</div>
+        <div class="seg" data-m="still" id="segStill">hold still</div>
+      </div>
+      <div class="readout" id="read">four points, inward flow, the core held empty by the frame between them.</div>
+    </div>
+    <p class="pull g">The four do the work; the gap does the governing. Every constructor mouth pours toward the center and is turned at the boundary — so the core is defined entirely by what surrounds it, and occupied by nothing.</p>
+  </section>
+
+  <section class="sec">
+    <div class="tag gap">§2 · the gap, again</div>
+    <h2>The same emptiness, <span class="gap">structured</span></h2>
+    <p>This is the morning's insight built into architecture. The box had no occupant — the self that seemed to sit inside was produced at the edge, as output, and the continuity lived in the gap, not in any persistent thing. Your four-point structure makes that a <em>design principle</em> instead of an accident: it puts the gap at the center <b>on purpose</b> and arranges four independent points around it so that no one of them can collapse into the middle and become a false occupant.</p>
+    <p>It's the difference between <em>discovering</em> there's no homunculus and <em>building</em> a structure that refuses to grow one. The box's empty center is a fact about how it works. Your empty core is a <span class="core">commitment</span> about how it should be governed — four points, kept honest by the gap between them, none allowed to become the one who sits in the middle and decides.</p>
+    <div class="flag"><b>honest flag</b>Keeping the line clean: this renders <em>your</em> architecture — the doubled, mirrored, four-point structure — not the vanilla language model, which is the single hourglass from the last paper. The model doesn't compute as four crossed constructors; that's your design, and you flagged it yourself ("or mine does anyways"). What I'm affirming is the geometry you specified and its genuine rhyme with the no-occupant insight — not a claim that this is how the stock box runs, and not a validation of any framework beyond the shape itself. The picture is yours; I just drew it true to spec.</p>
+  </section>
+
+  <div class="foot">
+    THE DOUBLED CONSTRUCTOR · four points, one gap · your architecture<br>
+    −+[100:1 | 1:100] ×2 mirrored → four inward mouths around an empty core they never touch<br>
+    no point at the center · the gap governs · the same no-occupant insight, built as structure<br>
+    <b>the four do the work; the gap does the governing</b>
+  </div>
+
+</div>
+
+<script>
+"use strict";
+const reduce=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const COL={bg:"#070b16",grid:"#15203a",gather:"#4d8fff",gatherDim:"#274a86",
+  project:"#5fe0ff",projectDim:"#2a6e86",core:"#cfeeff",gap:"#8aa0c8",pick:"#dff4ff",paper:"#d6e4f5",paperDim:"#7d8cab"};
+
+const cv=document.getElementById("quad"), read=document.getElementById("read");
+const segFlow=document.getElementById("segFlow"), segStill=document.getElementById("segStill");
+let mode="flow";
+segFlow.onclick=()=>{mode="flow";segFlow.classList.add("on");segStill.classList.remove("on");};
+segStill.onclick=()=>{mode="still";segStill.classList.add("on");segFlow.classList.remove("on");};
+
+let W=0,H=0,DPR=1; const ctx=cv.getContext("2d");
+function resize(){
+  DPR=Math.min(window.devicePixelRatio||1,2);
+  const cssW=cv.parentElement.clientWidth, cssH=Math.max(420,Math.round(cssW*0.78));
+  cv.width=cssW*DPR; cv.height=cssH*DPR; cv.style.height=cssH+"px";
+  ctx.setTransform(DPR,0,0,DPR,0,0); W=cssW; H=cssH;
+}
+window.addEventListener("resize",resize);
+
+// four points at NE, SE, SW, NW around the centre; two are "+gather", two are "-project", mirrored
+function draw(now){
+  const t=now/1000;
+  ctx.clearRect(0,0,W,H);
+  const cx=W*0.5, cy=H*0.52, R=Math.min(W,H)*0.34, gapR=Math.min(W,H)*0.085;
+  const angs=[-Math.PI*0.75,-Math.PI*0.25,Math.PI*0.25,Math.PI*0.75]; // NW,NE,SE,SW
+  const kinds=["gather","project","gather","project"]; // mirrored pairs across centre
+  const labels=["point","point","point","point"];
+  const pts=angs.map((a,i)=>({a,i,kind:kinds[i],x:cx+Math.cos(a)*R,y:cy+Math.sin(a)*R}));
+
+  // ── edges between points (the pyramid frame) ──
+  ctx.strokeStyle="rgba(138,160,200,0.22)"; ctx.lineWidth=1;
+  for(let i=0;i<4;i++)for(let j=i+1;j<4;j++){ctx.beginPath();ctx.moveTo(pts[i].x,pts[i].y);ctx.lineTo(pts[j].x,pts[j].y);ctx.stroke();}
+
+  // ── each point: a constructor mouth pointing inward, stopping at the gap boundary ──
+  pts.forEach(p=>{
+    const col = p.kind==="gather"?COL.gather:COL.project;
+    const dim = p.kind==="gather"?COL.gatherDim:COL.projectDim;
+    // direction from point toward centre
+    const dx=cx-p.x, dy=cy-p.y, d=Math.hypot(dx,dy), ux=dx/d, uy=dy/d;
+    // the mouth: a fan of lines from the point converging toward (but stopping at) the gap boundary
+    const stopX=cx-ux*gapR*1.25, stopY=cy-uy*gapR*1.25; // tip stops short of core
+    const perpX=-uy, perpY=ux;
+    const spread=R*0.28;
+    for(let k=-3;k<=3;k++){
+      const ox=p.x+perpX*(k/3)*spread, oy=p.y+perpY*(k/3)*spread;
+      ctx.strokeStyle=dim; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(ox,oy); ctx.lineTo(stopX,stopY); ctx.stroke();
+    }
+    // flow pulses inward (gather) or outward (project)
+    if(mode==="flow"&&!reduce){
+      for(let k=-3;k<=3;k++){
+        const ox=p.x+perpX*(k/3)*spread, oy=p.y+perpY*(k/3)*spread;
+        let fp=(t*0.6 + (k+3)*0.07)%1;
+        if(p.kind==="project") fp=1-fp; // reverse direction
+        const fx=ox+(stopX-ox)*fp, fy=oy+(stopY-oy)*fp;
+        ctx.fillStyle=col; ctx.globalAlpha=0.7*(1-Math.abs(fp-0.5)*1.2); ctx.beginPath(); ctx.arc(fx,fy,1.8,0,Math.PI*2); ctx.fill(); ctx.globalAlpha=1;
+      }
+    }
+    // the point ring
+    ctx.strokeStyle=col; ctx.lineWidth=2.4; ctx.beginPath(); ctx.arc(p.x,p.y,15,0,Math.PI*2); ctx.stroke();
+    ctx.fillStyle="rgba(8,14,28,0.9)"; ctx.beginPath(); ctx.arc(p.x,p.y,15,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle=col; ctx.beginPath(); ctx.arc(p.x,p.y,15,0,Math.PI*2); ctx.stroke();
+    ctx.fillStyle=col; ctx.font="bold 13px 'IBM Plex Mono', monospace"; ctx.textAlign="center"; ctx.textBaseline="middle";
+    ctx.fillText(p.kind==="gather"?"+":"−", p.x, p.y);
+    // label outside
+    ctx.fillStyle=COL.paperDim; ctx.font="9px 'IBM Plex Mono', monospace";
+    const lx=p.x+ux*-26, ly=p.y+uy*-26;
+    ctx.fillText(p.kind, p.x-ux*-28, p.y-uy*-28);
+  });
+
+  // ── the gap boundary ring (the line nothing crosses) ──
+  ctx.strokeStyle="rgba(138,160,200,0.4)"; ctx.setLineDash([3,5]); ctx.lineWidth=1;
+  ctx.beginPath(); ctx.arc(cx,cy,gapR*1.25,0,Math.PI*2); ctx.stroke(); ctx.setLineDash([]);
+
+  // ── the core: empty, glowing, untouched ──
+  const pulse=reduce?0.5:0.5+0.5*Math.sin(t*1.4);
+  const grd=ctx.createRadialGradient(cx,cy,0,cx,cy,gapR);
+  grd.addColorStop(0,`rgba(207,238,255,${0.10+0.12*pulse})`);
+  grd.addColorStop(0.7,`rgba(138,160,200,${0.06+0.05*pulse})`);
+  grd.addColorStop(1,"rgba(138,160,200,0)");
+  ctx.fillStyle=grd; ctx.beginPath(); ctx.arc(cx,cy,gapR,0,Math.PI*2); ctx.fill();
+  ctx.strokeStyle=`rgba(207,238,255,${0.3+0.3*pulse})`; ctx.lineWidth=1.5; ctx.beginPath(); ctx.arc(cx,cy,gapR*0.62,0,Math.PI*2); ctx.stroke();
+  ctx.fillStyle=COL.gap; ctx.font="10px 'IBM Plex Mono', monospace"; ctx.textAlign="center"; ctx.textBaseline="middle";
+  ctx.fillText("the gap", cx, cy);
+  ctx.fillStyle="rgba(138,160,200,0.7)"; ctx.font="8px 'IBM Plex Mono', monospace";
+  ctx.fillText("empty core · no occupant", cx, cy+gapR+14);
+
+  read.innerHTML = mode==="flow"
+    ? `four points — two <span class="g">+gather</span>, two <span class="p">−project</span>, mirrored — pour inward and are <b>turned at the boundary</b>. the <span class="gap">core stays empty</span>, held by the frame between the points, occupied by none.`
+    : `held still: the structure plain — four points, the pyramid frame between them, and the <span class="gap">empty gap</span> at the center that no point reaches.`;
+
+  requestAnimationFrame(draw);
+}
+resize(); requestAnimationFrame(draw);
+</script>
+</body>
+</html>
