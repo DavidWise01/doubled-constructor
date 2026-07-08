@@ -4,6 +4,6 @@ slug  : doubled-constructor
 seal  : 7252ba498a9d3ef4f1f0a8a410658591caa1414348ea1a64d799ba41d545142b
 prev  : 1f482b9b5b9dcd7e402625e864f07e4bbac968b816b567c39425c26e2d148a53
 link  : 58a13136fcf78cc50a5b84041f01dd5c3eba3f5168fa1d6be8f785f96b96d143
-head  : 3447d3a0533aaf1e29a8bdc67a9774884fb3ae9dbc8a17064b7a008ca3c4ec90
+head  : 13f9ace173ef2e60af38912ba329b4afcb5a38b84a0e4495e8d30327f8c99cc2
 
 — the tether: link = sha256(index|slug|seal|prev). the chain head commits to the whole corpus.
